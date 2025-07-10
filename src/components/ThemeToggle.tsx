@@ -9,13 +9,13 @@ const ThemeToggle: React.FC = () => {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative p-3 rounded-full bg-white dark:bg-gray-800/50 border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-500/60 transition-all duration-300 backdrop-blur-sm"
+      className="relative p-2 sm:p-3 rounded-full bg-white dark:bg-gray-800/50 border border-purple-200 dark:border-purple-500/30 hover:border-purple-400 dark:hover:border-purple-500/60 transition-all duration-300 backdrop-blur-sm"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       aria-label="Toggle theme"
     >
       <motion.div
-        className="relative w-6 h-6"
+        className="relative w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6"
         initial={false}
         animate={{ rotate: isDark ? 0 : 180 }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
@@ -29,7 +29,7 @@ const ThemeToggle: React.FC = () => {
           }}
           transition={{ duration: 0.3 }}
         >
-          <Moon className="w-6 h-6 text-purple-400 dark:text-purple-400" />
+          <Moon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-400 dark:text-purple-400" />
         </motion.div>
         <motion.div
           className="absolute inset-0 flex items-center justify-center"
@@ -40,7 +40,7 @@ const ThemeToggle: React.FC = () => {
           }}
           transition={{ duration: 0.3 }}
         >
-          <Sun className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <Sun className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-purple-600 dark:text-purple-400" />
         </motion.div>
       </motion.div>
     </motion.button>
