@@ -33,38 +33,38 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary flex items-center justify-center px-4 transition-colors duration-300">
+    <div className="min-h-screen bg-primary flex items-center justify-center px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       <motion.div
         initial={{ opacity: 0, y: 50, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8 }}
-        className="card-bg backdrop-blur-sm rounded-xl p-8 w-full max-w-md card-border"
+        className="card-bg backdrop-blur-sm rounded-xl p-6 sm:p-8 w-full max-w-md card-border"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-600/20 rounded-full mb-4"
+            className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-purple-100 dark:bg-purple-600/20 rounded-full mb-4"
           >
-            <Lock className="text-purple-600 dark:text-purple-400" size={32} />
+            <Lock className="text-purple-600 dark:text-purple-400" size={24} />
           </motion.div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Admin Login</h1>
-          <p className="text-gray-700 dark:text-secondary">Access the admin dashboard</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Admin Login</h1>
+          <p className="text-sm sm:text-base text-gray-700 dark:text-secondary">Access the admin dashboard</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
-            <label className="block text-sm font-medium text-secondary mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-secondary mb-2">
               Email
             </label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={16} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                 placeholder="Enter your email"
                 required
                 autoComplete="username"
@@ -73,16 +73,16 @@ const Login: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-secondary mb-2">
+            <label className="block text-xs sm:text-sm font-medium text-secondary mb-2">
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={20} />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" size={16} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-12 py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full pl-9 sm:pl-10 pr-10 sm:pr-12 py-2 sm:py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400 text-sm sm:text-base"
                 placeholder="Enter your password"
                 required
                 autoComplete="current-password"
@@ -92,13 +92,13 @@ const Login: React.FC = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary transition-colors duration-300"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-center text-sm">
+            <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded text-center text-xs sm:text-sm">
               {error}
             </div>
           )}
@@ -106,7 +106,7 @@ const Login: React.FC = () => {
           <motion.button
             type="submit"
             disabled={loading}
-            className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white font-semibold rounded-lg transition-all duration-300 flex items-center justify-center"
+            className="w-full px-6 py-2 sm:py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white font-semibold rounded-lg transition-all duration-300 flex items-center justify-center text-sm sm:text-base"
             whileHover={{ scale: loading ? 1 : 1.02 }}
             whileTap={{ scale: loading ? 1 : 0.98 }}
           >

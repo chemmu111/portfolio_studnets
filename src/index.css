@@ -215,6 +215,21 @@ input, textarea, select {
   font-family: 'Georgia', serif;
 }
 
+/* Text truncation utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* Focus states */
 input:focus, textarea:focus, select:focus {
   outline: none;
@@ -223,6 +238,31 @@ input:focus, textarea:focus, select:focus {
 .dark input:focus, .dark textarea:focus, .dark select:focus {
   border-color: #6D28D9;
   box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Improve touch targets */
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+  
+  /* Better text sizing for mobile */
+  .text-responsive {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Improve spacing on mobile */
+  .mobile-spacing {
+    padding: 1rem;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Backdrop blur support */

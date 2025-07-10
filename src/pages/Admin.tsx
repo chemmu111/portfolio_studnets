@@ -125,30 +125,30 @@ const Admin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-24 pb-12 transition-colors duration-300">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-20 sm:pt-24 pb-12 transition-colors duration-300">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4"
         >
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white bg-gradient-to-r from-purple-600 to-purple-800 dark:from-purple-400 dark:to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-4 text-gray-900 dark:text-white bg-gradient-to-r from-purple-600 to-purple-800 dark:from-purple-400 dark:to-purple-600 bg-clip-text text-transparent">
               Admin Dashboard
             </h1>
-            <p className="text-xl text-gray-700 dark:text-gray-400">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-700 dark:text-gray-400">
               Manage student projects and portfolio content
             </p>
           </div>
           <motion.button
             onClick={() => setShowForm(true)}
-            className="flex items-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-300"
+            className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-300 text-sm sm:text-base w-full sm:w-auto"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Plus size={20} />
+            <Plus size={16} className="sm:w-5 sm:h-5" />
             <span>Add Project</span>
           </motion.button>
         </motion.div>
@@ -163,58 +163,58 @@ const Admin: React.FC = () => {
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200"
+              className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl p-4 sm:p-6 lg:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200 mx-4"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white dark:text-white light:text-gray-900">
+              <div className="flex items-start justify-between mb-4 sm:mb-6">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white dark:text-white light:text-gray-900 pr-4 flex-1">
                   {editingProject ? 'Edit Project' : 'Add New Project'}
                 </h2>
                 <button
                   onClick={handleCancel}
-                  className="text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-white dark:hover:text-white light:hover:text-gray-900 transition-colors duration-300"
+                  className="text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-white dark:hover:text-white light:hover:text-gray-900 transition-colors duration-300 text-xl flex-shrink-0"
                 >
-                  <X size={24} />
+                  <X size={20} className="sm:w-6 sm:h-6" />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                       Student Name *
                     </label>
                     <input
                       {...register('student_name', { required: 'Student name is required' })}
-                      className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                       placeholder="Enter student name"
                     />
                     {errors.student_name && (
-                      <p className="text-red-400 text-sm mt-1">{errors.student_name.message}</p>
+                      <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.student_name.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                       Project Title *
                     </label>
                     <input
                       {...register('project_title', { required: 'Project title is required' })}
-                      className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                       placeholder="Enter project title"
                     />
                     {errors.project_title && (
-                      <p className="text-red-400 text-sm mt-1">{errors.project_title.message}</p>
+                      <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.project_title.message}</p>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                     Category *
                   </label>
                   <select
                     {...register('category', { required: 'Category is required' })}
-                    className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 appearance-none cursor-pointer"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 appearance-none cursor-pointer text-sm sm:text-base"
                   >
                     <option value="">Select a category</option>
                     {categories.map(category => (
@@ -222,109 +222,109 @@ const Admin: React.FC = () => {
                     ))}
                   </select>
                   {errors.category && (
-                    <p className="text-red-400 text-sm mt-1">{errors.category.message}</p>
+                    <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.category.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                     Tools/Technologies * (comma-separated)
                   </label>
                   <input
                     {...register('tools_technologies', { required: 'Technologies are required' })}
-                    className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                     placeholder="React, Node.js, MongoDB, etc."
                   />
                   {errors.tools_technologies && (
-                    <p className="text-red-400 text-sm mt-1">{errors.tools_technologies.message}</p>
+                    <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.tools_technologies.message}</p>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                       LinkedIn Link
                     </label>
                     <input
                       {...register('linkedin_link')}
-                      className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                       placeholder="https://linkedin.com/in/username"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                       GitHub Link
                     </label>
                     <input
                       {...register('github_link')}
-                      className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                       placeholder="https://github.com/username/repo"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                     Live Project Link
                   </label>
                   <input
                     {...register('live_project_link')}
-                    className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                     placeholder="https://your-project.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                     LinkedIn Profile Picture URL
                   </label>
                   <input
                     {...register('linkedin_profile_picture')}
-                    className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                     placeholder="https://example.com/profile.jpg"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                     Main Project Image URL *
                   </label>
                   <input
                     {...register('main_project_image', { required: 'Project image is required' })}
-                    className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                     placeholder="https://example.com/project-image.jpg"
                   />
                   {errors.main_project_image && (
-                    <p className="text-red-400 text-sm mt-1">{errors.main_project_image.message}</p>
+                    <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.main_project_image.message}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
                     Project Video URL (optional)
                   </label>
                   <input
                     {...register('project_video')}
-                    className="w-full px-4 py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
                     placeholder="https://youtube.com/watch?v=..."
                   />
                 </div>
 
-                <div className="flex space-x-4 pt-6">
+                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6">
                   <motion.button
                     type="submit"
-                    className="flex items-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-300 flex-1"
+                    className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-300 flex-1 text-sm sm:text-base"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Save size={20} />
+                    <Save size={16} className="sm:w-5 sm:h-5" />
                     <span>{editingProject ? 'Update Project' : 'Create Project'}</span>
                   </motion.button>
                   <motion.button
                     type="button"
                     onClick={handleCancel}
-                    className="px-6 py-3 border border-gray-600 dark:border-gray-600 light:border-gray-300 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100 font-semibold rounded-lg transition-all duration-300"
+                    className="px-4 sm:px-6 py-2 sm:py-3 border border-gray-600 dark:border-gray-600 light:border-gray-300 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100 font-semibold rounded-lg transition-all duration-300 text-sm sm:text-base"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -353,51 +353,51 @@ const Admin: React.FC = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300"
+                className="bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-xl p-4 sm:p-6 border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex space-x-4 flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="flex space-x-3 sm:space-x-4 flex-1">
                     <img
                       src={project.main_project_image}
                       alt={project.project_title}
-                      className="w-20 h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200"
+                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0"
                     />
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{project.project_title}</h3>
-                      <p className="text-purple-700 dark:text-purple-400 mb-2">by {project.student_name}</p>
-                      <div className="flex flex-wrap gap-2 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2 line-clamp-2">{project.project_title}</h3>
+                      <p className="text-sm sm:text-base text-purple-700 dark:text-purple-400 mb-2">by {project.student_name}</p>
+                      <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
                         {project.tools_technologies.map((tech, techIndex) => (
                           <span
                             key={techIndex}
-                            className="px-2 py-1 bg-purple-600/20 dark:bg-purple-600/20 light:bg-purple-100 text-purple-300 dark:text-purple-300 light:text-purple-700 rounded text-xs border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200"
+                            className="px-2 py-1 bg-purple-600/20 dark:bg-purple-600/20 light:bg-purple-100 text-purple-300 dark:text-purple-300 light:text-purple-700 rounded text-xs border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 whitespace-nowrap"
                           >
                             {tech}
                           </span>
                         ))}
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-700 dark:text-gray-400">
+                      <div className="flex items-center space-x-2 sm:space-x-4 text-xs sm:text-sm text-gray-700 dark:text-gray-400">
                         <span>❤️ {project.likes_count}</span>
                         <span>💬 {project.comments_count}</span>
-                        <span>📅 {new Date(project.created_at).toLocaleDateString()}</span>
+                        <span className="hidden sm:inline">📅 {new Date(project.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 justify-end sm:justify-start">
                     <motion.button
                       onClick={() => handleEdit(project)}
-                      className="p-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-lg transition-all duration-300"
+                      className="p-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-lg transition-all duration-300 flex-shrink-0"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Edit size={16} />
+                      <Edit size={14} className="sm:w-4 sm:h-4" />
                     </motion.button>
                     <motion.button
                       onClick={() => handleDelete(project.id)}
-                      className="p-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-all duration-300"
+                      className="p-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-all duration-300 flex-shrink-0"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={14} className="sm:w-4 sm:h-4" />
                     </motion.button>
                   </div>
                 </div>
