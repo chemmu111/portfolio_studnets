@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await supabase
         .from('admins')
         .select('*')
-        .eq('username', username)
+        .eq('email', username)
         .single();
 
       if (error || !data) {
@@ -53,12 +53,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      // In a real app, you'd use bcrypt to compare passwords
-      // For demo purposes, we'll use plain text comparison
+      // Simple password comparison for demo
       if (data.password_hash === password) {
         localStorage.setItem('admin_token', data.id);
         setIsAuthenticated(true);
         setIsAdmin(true);
+        setEmail(data.email);
         toast.success('Login successful!');
         return true;
       } else {
@@ -76,6 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('admin_token');
     setIsAuthenticated(false);
     setIsAdmin(false);
+    setEmail(null);
     toast.success('Logged out successfully');
   };
 

@@ -4,23 +4,14 @@ import { Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/useAuth';
 import { useNavigate } from 'react-router-dom';
 
-const ADMIN_EMAIL = 'sammassammas691@gmail.com';
-const ADMIN_PASSWORD = 'chemmu@123';
-
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { setAuthState } = useAuth(); // We'll assume setAuthState({ isAuthenticated, isAdmin, email })
+  const { login } = useAuth();
   const navigate = useNavigate();
-
-  // Placeholder for backend notification
-  const notifyAdminLogin = async (email: string) => {
-    // TODO: Implement backend call to send Gmail notification
-    // await fetch('/api/admin-login-notify', { method: 'POST', body: JSON.stringify({ email, time: new Date() }) });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,30 +19,14 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message || "Login failed");
-        setLoading(false);
-        return;
-      }
-      // Set auth state based on backend response
-      setAuthState({
-        isAuthenticated: true,
-        isAdmin: data.role === "admin",
-        email: data.email,
-      });
-      if (data.role === "admin") {
-        await notifyAdminLogin(email);
+      const success = await login(email, password);
+      if (success) {
         navigate("/admin");
       } else {
-        navigate("/");
+        setError("Invalid credentials");
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError("Login failed. Please try again.");
     }
     setLoading(false);
@@ -90,7 +65,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="Enter your Gmail address"
+                placeholder="admin@techschool.com"
                 required
                 autoComplete="username"
               />
@@ -108,7 +83,7 @@ const Login: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-12 py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="Enter your password"
+                placeholder="admin@123"
                 required
                 autoComplete="current-password"
               />
