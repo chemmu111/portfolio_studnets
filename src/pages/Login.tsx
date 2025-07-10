@@ -65,7 +65,7 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="admin@techschool.com"
+                placeholder="Enter your email"
                 required
                 autoComplete="username"
               />
@@ -83,7 +83,7 @@ const Login: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-12 py-3 input-bg input-border rounded-lg input-focus transition-all duration-300 text-primary placeholder-gray-500 dark:placeholder-gray-400"
-                placeholder="admin@123"
+                placeholder="Enter your password"
                 required
                 autoComplete="current-password"
               />
