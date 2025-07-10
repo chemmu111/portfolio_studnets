@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           .from('admins')
           .select('id, username')
           .eq('id', token)
-          .single();
+          .maybeSingle();
 
         if (data && !error) {
           setIsAuthenticated(true);
