@@ -6,6 +6,15 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIU
 // Create a mock client if environment variables are not properly set
 let supabase;
 
+// Mock admin data for demo purposes
+const mockAdmin = {
+  id: 'mock-admin-id',
+  username: 'admin',
+  email: 'admin@techschool.com',
+  password_hash: 'admin@123',
+  created_at: new Date().toISOString()
+};
+
 try {
   if (!supabaseUrl || !supabaseAnonKey || 
       supabaseUrl === 'https://your-project-id.supabase.co' || 
@@ -17,17 +26,26 @@ try {
     // Create a mock Supabase client for demo purposes
     supabase = {
       from: (table: string) => ({
-        select: () => Promise.resolve({ data: [], error: null }),
+        select: (columns?: string) => ({
+          eq: (column: string, value: any) => ({
+            maybeSingle: () => {
+              if (table === 'admins' && column === 'email' && value === 'admin@techschool.com') {
+                return Promise.resolve({ data: mockAdmin, error: null });
+              }
+              return Promise.resolve({ data: null, error: null });
+            },
+            single: () => {
+              if (table === 'admins' && column === 'email' && value === 'admin@techschool.com') {
+                return Promise.resolve({ data: mockAdmin, error: null });
+              }
+              return Promise.resolve({ data: null, error: { message: 'No data found' } });
+            }
+          }),
+          order: () => Promise.resolve({ data: [], error: null })
+        }),
         insert: () => Promise.resolve({ data: null, error: null }),
         update: () => Promise.resolve({ data: null, error: null }),
         delete: () => Promise.resolve({ data: null, error: null }),
-        eq: () => ({
-          single: () => Promise.resolve({ data: null, error: { message: 'Demo mode - no backend connection' } }),
-          maybeSingle: () => Promise.resolve({ data: null, error: null })
-        }),
-        order: () => Promise.resolve({ data: [], error: null }),
-        maybeSingle: () => Promise.resolve({ data: null, error: null }),
-        single: () => Promise.resolve({ data: null, error: { message: 'Demo mode - no backend connection' } })
       })
     };
   } else {
@@ -37,17 +55,26 @@ try {
   console.warn('Failed to initialize Supabase client. Running in demo mode.');
   supabase = {
     from: (table: string) => ({
-      select: () => Promise.resolve({ data: [], error: null }),
+      select: (columns?: string) => ({
+        eq: (column: string, value: any) => ({
+          maybeSingle: () => {
+            if (table === 'admins' && column === 'email' && value === 'admin@techschool.com') {
+              return Promise.resolve({ data: mockAdmin, error: null });
+            }
+            return Promise.resolve({ data: null, error: null });
+          },
+          single: () => {
+            if (table === 'admins' && column === 'email' && value === 'admin@techschool.com') {
+              return Promise.resolve({ data: mockAdmin, error: null });
+            }
+            return Promise.resolve({ data: null, error: { message: 'No data found' } });
+          }
+        }),
+        order: () => Promise.resolve({ data: [], error: null })
+      }),
       insert: () => Promise.resolve({ data: null, error: null }),
       update: () => Promise.resolve({ data: null, error: null }),
       delete: () => Promise.resolve({ data: null, error: null }),
-      eq: () => ({
-        single: () => Promise.resolve({ data: null, error: { message: 'Demo mode - no backend connection' } }),
-        maybeSingle: () => Promise.resolve({ data: null, error: null })
-      }),
-      order: () => Promise.resolve({ data: [], error: null }),
-      maybeSingle: () => Promise.resolve({ data: null, error: null }),
-      single: () => Promise.resolve({ data: null, error: { message: 'Demo mode - no backend connection' } })
     })
   };
 }

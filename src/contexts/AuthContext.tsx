@@ -46,14 +46,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('admins')
         .select('*')
         .eq('email', username)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
+        console.log('Login error or no user found:', error);
         toast.error('Invalid credentials');
         return false;
       }
 
-      // Simple password comparison for demo
+      // Direct password comparison (for demo purposes)
       if (data.password_hash === password) {
         localStorage.setItem('admin_token', data.id);
         setIsAuthenticated(true);
@@ -62,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         toast.success('Login successful!');
         return true;
       } else {
+        console.log('Password mismatch');
         toast.error('Invalid credentials');
         return false;
       }
