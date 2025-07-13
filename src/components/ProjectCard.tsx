@@ -8,7 +8,6 @@ import toast from 'react-hot-toast';
 
 interface ProjectCardProps {
   project: Project;
-  onUpdate?: () => void;
 }
 
 interface Comment {
@@ -19,7 +18,7 @@ interface Comment {
   created_at: string;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpdate }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   // Removed like/comment state
   const [showDetails, setShowDetails] = useState(false);
 
@@ -37,11 +36,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpdate }) => {
       >
         <div className="relative overflow-hidden">
           <motion.img
-            src={project.main_project_image}
+            src={project.main_project_image || 'https://via.placeholder.com/400x300?text=Project+Image'}
             alt={project.project_title}
             className="w-full h-40 sm:h-48 object-cover"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = 'https://via.placeholder.com/400x300?text=Project+Image';
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <div className="absolute top-2 sm:top-4 right-2 sm:right-4 flex space-x-1 sm:space-x-2">
@@ -76,13 +79,15 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpdate }) => {
 
         <div className="p-4 sm:p-6 flex-1 flex flex-col">
           <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
-            {project.linkedin_profile_picture && (
-              <img
-                src={project.linkedin_profile_picture}
-                alt={project.student_name}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-purple-500/30 flex-shrink-0"
-              />
-            )}
+            <img
+              src={project.linkedin_profile_picture || 'https://via.placeholder.com/100x100?text=User'}
+              alt={project.student_name}
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-purple-500/30 flex-shrink-0"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://via.placeholder.com/100x100?text=User';
+              }}
+            />
             <div className="flex-1 min-w-0">
               <h4 className="font-semibold text-white dark:text-white text-sm sm:text-base truncate">{project.student_name}</h4>
               <div className="flex items-center text-gray-400 dark:text-gray-400 text-xs sm:text-sm">
@@ -109,7 +114,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpdate }) => {
           </h3>
 
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 flex-1">
-            {project.tools_technologies.map((tech, index) => (
+            {(project.tools_technologies || []).map((tech, index) => (
               <span
                 key={index}
                 className="px-2 sm:px-3 py-1 bg-purple-600/20 dark:bg-purple-600/20 text-purple-300 dark:text-purple-300 rounded-full text-xs border border-purple-500/30 dark:border-purple-500/30 whitespace-nowrap"
@@ -152,9 +157,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpdate }) => {
             </div>
             
             <img
-              src={project.main_project_image}
+              src={project.main_project_image || 'https://via.placeholder.com/400x300?text=Project+Image'}
               alt={project.project_title}
               className="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-lg mb-4 sm:mb-6"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = 'https://via.placeholder.com/400x300?text=Project+Image';
+              }}
             />
             
             <div className="space-y-3 sm:space-y-4">
@@ -166,7 +175,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onUpdate }) => {
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-purple-400 dark:text-purple-400 mb-2">Technologies</h3>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
-                  {project.tools_technologies.map((tech, index) => (
+                  {(project.tools_technologies || []).map((tech, index) => (
                     <span
                       key={index}
                       className="px-2 sm:px-3 py-1 bg-purple-600/20 dark:bg-purple-600/20 text-purple-300 dark:text-purple-300 rounded-full text-xs sm:text-sm border border-purple-500/30 dark:border-purple-500/30"

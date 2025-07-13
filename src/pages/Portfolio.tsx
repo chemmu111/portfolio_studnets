@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { Project } from '../types';
+import { useProjects } from '../contexts/ProjectContext';
 import ProjectCard from '../components/ProjectCard';
 
 const Portfolio: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const { projects, loading } = useProjects();
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortOption, setSortOption] = useState<'latest' | 'oldest' | 'date'>('latest');
@@ -53,28 +51,8 @@ const Portfolio: React.FC = () => {
   }, [projects, searchTerm, selectedCategory, sortOption, filterDate]);
 
   useEffect(() => {
-    loadProjects();
-  }, []);
-
-  useEffect(() => {
     filterProjects();
   }, [projects, searchTerm, selectedCategory, sortOption, filterDate, filterProjects]);
-
-  const loadProjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
-    } catch (error) {
-      console.error('Error loading projects:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div id="portfolio" className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-20 sm:pt-24 pb-12 transition-colors duration-300">
@@ -215,6 +193,7 @@ const Portfolio: React.FC = () => {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
                   <ProjectCard project={project} onUpdate={loadProjects} />
+                  <ProjectCard project={project} />
                 </motion.div>
               ))}
             </motion.div>

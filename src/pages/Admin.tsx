@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { supabase } from '../lib/supabase';
-import { Project } from '../types';
-import toast from 'react-hot-toast';
+import { useProjects } from '../contexts/ProjectContext';
 
 interface ProjectForm {
   student_name: string;
@@ -20,72 +18,38 @@ interface ProjectForm {
 }
 
 const Admin: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { projects, loading, addProject, updateProject, deleteProject } = useProjects();
   const [showForm, setShowForm] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingProject, setEditingProject] = useState<any>(null);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProjectForm>();
 
   const categories = ['Web Application', 'Automation'];
-
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
-  const loadProjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('projects')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
-    } catch (error) {
-      console.error('Error loading projects:', error);
-      toast.error('Failed to load projects');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const onSubmit = async (data: ProjectForm) => {
     try {
       const projectData = {
         ...data,
         tools_technologies: data.tools_technologies.split(',').map(tech => tech.trim()),
-        likes_count: editingProject?.likes_count || 0,
-        comments_count: editingProject?.comments_count || 0,
       };
 
+      let success = false;
       if (editingProject) {
-        const { error } = await supabase
-          .from('projects')
-          .update(projectData)
-          .eq('id', editingProject.id);
-
-        if (error) throw error;
-        toast.success('Project updated successfully!');
+        success = await updateProject(editingProject.id, projectData);
       } else {
-        const { error } = await supabase
-          .from('projects')
-          .insert([projectData]);
-
-        if (error) throw error;
-        toast.success('Project created successfully!');
+        success = await addProject(projectData);
       }
 
-      setShowForm(false);
-      setEditingProject(null);
-      reset();
-      loadProjects();
+      if (success) {
+        setShowForm(false);
+        setEditingProject(null);
+        reset();
+      }
     } catch (error) {
       console.error('Error saving project:', error);
-      toast.error('Failed to save project');
     }
   };
 
-  const handleEdit = (project: Project) => {
+  const handleEdit = (project: any) => {
     setEditingProject(project);
     setValue('student_name', project.student_name);
     setValue('project_title', project.project_title);
@@ -102,20 +66,7 @@ const Admin: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('projects')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      toast.success('Project deleted successfully!');
-      loadProjects();
-    } catch (error) {
-      console.error('Error deleting project:', error);
-      toast.error('Failed to delete project');
-    }
+    await deleteProject(id);
   };
 
   const handleCancel = () => {
@@ -293,7 +244,7 @@ const Admin: React.FC = () => {
                   <input
                     {...register('main_project_image', { required: 'Project image is required' })}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
-                    placeholder="https://example.com/project-image.jpg"
+                    placeholder="https://example.com/project-image.jpg (leave empty for default)"
                   />
                   {errors.main_project_image && (
                     <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.main_project_image.message}</p>
@@ -307,7 +258,7 @@ const Admin: React.FC = () => {
                   <input
                     {...register('project_video')}
                     className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
-                    placeholder="https://youtube.com/watch?v=..."
+                    placeholder="https://youtube.com/watch?v=... (optional)"
                   />
                 </div>
 
@@ -358,13 +309,9 @@ const Admin: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="flex space-x-3 sm:space-x-4 flex-1">
                     <img
-                      src={project.main_project_image || 'https://via.placeholder.com/100x100?text=Project'}
+                      src={project.main_project_image}
                       alt={`${project.project_title} project image`}
                       className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://via.placeholder.com/100x100?text=Project';
-                      }}
                     />
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2 line-clamp-2">{project.project_title}</h3>
