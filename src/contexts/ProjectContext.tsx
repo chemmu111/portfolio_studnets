@@ -44,8 +44,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
       // Ensure all projects have default values for missing fields
       const processedProjects = (data || []).map(project => ({
         ...project,
-        main_project_image: project.main_project_image || 'https://via.placeholder.com/400x300?text=Project+Image',
-        linkedin_profile_picture: project.linkedin_profile_picture || 'https://via.placeholder.com/100x100?text=User',
+        main_project_image: project.main_project_image || 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Project',
+        linkedin_profile_picture: project.linkedin_profile_picture || 'https://via.placeholder.com/40x40/a855f7/ffffff?text=👤',
         category: project.category || 'Uncategorized',
         tools_technologies: project.tools_technologies || [],
         likes_count: project.likes_count || 0,
@@ -69,8 +69,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     try {
       const newProject = {
         ...projectData,
-        main_project_image: projectData.main_project_image || 'https://via.placeholder.com/400x300?text=Project+Image',
-        linkedin_profile_picture: projectData.linkedin_profile_picture || 'https://via.placeholder.com/100x100?text=User',
+        main_project_image: projectData.main_project_image || 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Project',
+        linkedin_profile_picture: projectData.linkedin_profile_picture || 'https://via.placeholder.com/40x40/a855f7/ffffff?text=👤',
         category: projectData.category || 'Uncategorized',
         tools_technologies: projectData.tools_technologies || [],
         likes_count: 0,

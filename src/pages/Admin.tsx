@@ -309,9 +309,15 @@ const Admin: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div className="flex space-x-3 sm:space-x-4 flex-1">
                     <img
-                      src={project.main_project_image}
+                      src={project.main_project_image || 'https://via.placeholder.com/100x100?text=Project'}
                       alt={`${project.project_title} project image`}
-                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20"
+                      className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 bg-gray-100 dark:bg-gray-800"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        if (target.src !== 'https://via.placeholder.com/100x100?text=Project') {
+                          target.src = 'https://via.placeholder.com/100x100?text=Project';
+                        }
+                      }}
                     />
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2 line-clamp-2">{project.project_title}</h3>

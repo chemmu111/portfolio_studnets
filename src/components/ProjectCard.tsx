@@ -36,14 +36,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       >
         <div className="relative overflow-hidden">
           <motion.img
-            src={project.main_project_image || 'https://via.placeholder.com/400x300?text=Project+Image'}
+            src={project.main_project_image || 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Project'}
             alt={project.project_title}
-            className="w-full h-40 sm:h-48 object-cover"
+            className="w-full h-40 sm:h-48 object-cover bg-gray-100 dark:bg-gray-800"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.src = 'https://via.placeholder.com/400x300?text=Project+Image';
+              if (target.src !== 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Project') {
+                target.src = 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Project';
+              }
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
@@ -80,12 +82,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         <div className="p-4 sm:p-6 flex-1 flex flex-col">
           <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
             <img
-              src={project.linkedin_profile_picture || 'https://via.placeholder.com/100x100?text=User'}
+              src={project.linkedin_profile_picture || 'https://via.placeholder.com/40x40/a855f7/ffffff?text=👤'}
               alt={project.student_name}
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-purple-500/30 flex-shrink-0"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-purple-500/30 flex-shrink-0 object-cover bg-gray-100 dark:bg-gray-800"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/100x100?text=User';
+                if (target.src !== 'https://via.placeholder.com/40x40/a855f7/ffffff?text=👤') {
+                  target.src = 'https://via.placeholder.com/40x40/a855f7/ffffff?text=👤';
+                }
               }}
             />
             <div className="flex-1 min-w-0">
@@ -157,12 +161,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             </div>
             
             <img
-              src={project.main_project_image || 'https://via.placeholder.com/400x300?text=Project+Image'}
+              src={project.main_project_image || 'https://via.placeholder.com/600x400/6366f1/ffffff?text=Project+Details'}
               alt={project.project_title}
-              className="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-lg mb-4 sm:mb-6"
+              className="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-lg mb-4 sm:mb-6 bg-gray-100 dark:bg-gray-800"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = 'https://via.placeholder.com/400x300?text=Project+Image';
+                if (target.src !== 'https://via.placeholder.com/600x400/6366f1/ffffff?text=Project+Details') {
+                  target.src = 'https://via.placeholder.com/600x400/6366f1/ffffff?text=Project+Details';
+                }
               }}
             />
             

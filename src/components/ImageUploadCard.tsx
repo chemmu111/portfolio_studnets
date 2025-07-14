@@ -89,10 +89,16 @@ const ImageUploadCard: React.FC<ImageUploadCardProps> = ({
             <motion.img
               src={uploadedImage}
               alt="Uploaded project"
-              className="w-full h-40 sm:h-48 object-cover"
+              className="w-full h-40 sm:h-48 object-cover rounded-t-xl bg-gray-100 dark:bg-gray-800"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.3 }}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Upload+Failed') {
+                  target.src = 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Upload+Failed';
+                }
+              }}
             />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
               <motion.button
