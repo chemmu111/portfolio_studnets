@@ -117,6 +117,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             {project.project_title}
           </h3>
 
+          {project.description && (
+            <p className="text-sm text-gray-300 dark:text-gray-400 mb-3 line-clamp-2 leading-relaxed">
+              {project.description}
+            </p>
+          )}
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 flex-1">
             {(project.tools_technologies || []).map((tech, index) => (
               <span
@@ -177,6 +182,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
                 <h3 className="text-base sm:text-lg font-semibold text-purple-400 dark:text-purple-400 mb-2">Student</h3>
                 <p className="text-sm sm:text-base text-gray-900 dark:text-white">{project.student_name}</p>
               </div>
+              
+              {project.description && (
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-purple-400 dark:text-purple-400 mb-2">Description</h3>
+                  <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed">{project.description}</p>
+                </div>
+              )}
               
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-purple-400 dark:text-purple-400 mb-2">Technologies</h3>

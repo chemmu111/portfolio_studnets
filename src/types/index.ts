@@ -2,6 +2,7 @@ export interface Project {
   id: string;
   student_name: string;
   project_title: string;
+  description?: string;
   tools_technologies: string[];
   category?: string;
   created_at: string;
