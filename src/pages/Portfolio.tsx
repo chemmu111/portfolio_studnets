@@ -192,7 +192,6 @@ const Portfolio: React.FC = () => {
                   exit={{ opacity: 0, y: 50 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                 >
-                  <ProjectCard project={project} onUpdate={loadProjects} />
                   <ProjectCard project={project} />
                 </motion.div>
               ))}
