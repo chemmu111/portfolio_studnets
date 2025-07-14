@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Upload, Image } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useProjects } from '../contexts/ProjectContext';
 
@@ -21,14 +21,28 @@ const Admin: React.FC = () => {
   const { projects, loading, addProject, updateProject, deleteProject } = useProjects();
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProjectForm>();
 
   const categories = ['Web Application', 'Automation'];
 
   const onSubmit = async (data: ProjectForm) => {
     try {
+      let imageUrl = data.main_project_image;
+      
+      // If an image was uploaded, convert it to base64 data URL
+      if (selectedImage) {
+        const reader = new FileReader();
+        imageUrl = await new Promise<string>((resolve) => {
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(selectedImage);
+        });
+      }
+
       const projectData = {
         ...data,
+        main_project_image: imageUrl,
         tools_technologies: data.tools_technologies.split(',').map(tech => tech.trim()),
       };
 
@@ -51,6 +65,8 @@ const Admin: React.FC = () => {
 
   const handleEdit = (project: any) => {
     setEditingProject(project);
+    setSelectedImage(null);
+    setImagePreview(project.main_project_image || '');
     setValue('student_name', project.student_name);
     setValue('project_title', project.project_title);
     setValue('tools_technologies', project.tools_technologies.join(', '));
@@ -72,9 +88,28 @@ const Admin: React.FC = () => {
   const handleCancel = () => {
     setShowForm(false);
     setEditingProject(null);
+    setSelectedImage(null);
+    setImagePreview('');
     reset();
   };
 
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview('');
+    setValue('main_project_image', '');
+  };
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-20 sm:pt-24 pb-12 transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -238,16 +273,81 @@ const Admin: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">
-                    Main Project Image URL *
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-3">
+                    Main Project Image *
                   </label>
+                  
+                  {/* Image Upload Area */}
+                  <div className="space-y-3">
+                    {imagePreview ? (
+                      <div className="relative group">
+                        <img
+                          src={imagePreview}
+                          alt="Project preview"
+                          className="w-full h-40 sm:h-48 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
+                          <button
+                            type="button"
+                            onClick={removeImage}
+                            className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-full transition-colors duration-300"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-40 sm:h-48 border-2 border-dashed border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-purple-500 dark:hover:border-purple-500 light:hover:border-purple-600 transition-all duration-300 bg-gray-800/20 dark:bg-gray-800/20 light:bg-gray-50">
+                        <Image className="w-12 h-12 text-purple-400 dark:text-purple-400 light:text-purple-600 mb-3" />
+                        <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 text-center mb-2">
+                          Click to upload project image
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-500">
+                          PNG, JPG, GIF up to 10MB
+                        </p>
+                      </div>
+                    )}
+                    
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageSelect}
+                      className="hidden"
+                      id="image-upload"
+                    />
+                    
+                    <div className="flex space-x-3">
+                      <label
+                        htmlFor="image-upload"
+                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600/20 dark:bg-purple-600/20 light:bg-purple-100 text-purple-300 dark:text-purple-300 light:text-purple-700 rounded-lg cursor-pointer hover:bg-purple-600/30 dark:hover:bg-purple-600/30 light:hover:bg-purple-200 transition-all duration-300 text-sm border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200"
+                      >
+                        <Upload size={14} />
+                        <span>Choose Image</span>
+                      </label>
+                      
+                      {imagePreview && (
+                        <button
+                          type="button"
+                          onClick={removeImage}
+                          className="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-all duration-300 text-sm border border-red-500/30"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Hidden input for form validation */}
                   <input
-                    {...register('main_project_image', { required: 'Project image is required' })}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base"
-                    placeholder="https://example.com/project-image.jpg (leave empty for default)"
+                    {...register('main_project_image', { 
+                      required: !imagePreview && !selectedImage ? 'Project image is required' : false 
+                    })}
+                    type="hidden"
+                    value={imagePreview}
                   />
-                  {errors.main_project_image && (
-                    <p className="text-red-400 text-xs sm:text-sm mt-1">{errors.main_project_image.message}</p>
+                  
+                  {errors.main_project_image && !imagePreview && !selectedImage && (
+                    <p className="text-red-400 text-xs sm:text-sm mt-2">{errors.main_project_image.message}</p>
                   )}
                 </div>
 
