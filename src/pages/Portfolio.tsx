@@ -182,7 +182,7 @@ const Portfolio: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
+              className="project-grid"
             >
               {filteredProjects.map((project, index) => (
                 <motion.div
@@ -191,6 +191,7 @@ const Portfolio: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 50 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="project-card-wrapper"
                 >
                   <ProjectCard project={project} />
                 </motion.div>

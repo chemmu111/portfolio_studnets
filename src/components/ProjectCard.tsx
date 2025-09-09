@@ -31,14 +31,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         whileHover={{ y: -5 }}
-        className="bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-xl overflow-hidden border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 dark:hover:shadow-purple-500/20 cursor-pointer h-full flex flex-col"
+        className="project-card bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-xl overflow-hidden border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 dark:hover:shadow-purple-500/20 cursor-pointer"
         onClick={() => setShowDetails(true)}
       >
-        <div className="relative overflow-hidden">
+        <div className="project-card-image relative overflow-hidden">
           <motion.img
             src={project.main_project_image || 'https://via.placeholder.com/400x300/6366f1/ffffff?text=Project'}
             alt={project.project_title}
-            className="w-full h-40 sm:h-48 object-cover bg-gray-100 dark:bg-gray-800"
+            className="w-full h-48 object-cover bg-gray-100 dark:bg-gray-800"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
             onError={(e) => {
@@ -79,7 +79,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 flex-1 flex flex-col">
+        <div className="project-card-content p-4 sm:p-6">
           <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
             <img
               src={project.linkedin_profile_picture || 'https://via.placeholder.com/40x40/a855f7/ffffff?text=👤'}
@@ -113,16 +113,16 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             )}
           </div>
 
-          <h3 className="text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-white dark:text-white hover:text-purple-400 dark:hover:text-purple-400 transition-colors duration-300 line-clamp-2">
+          <h3 className="project-card-title text-base sm:text-lg lg:text-xl font-bold mb-2 sm:mb-3 text-white dark:text-white hover:text-purple-400 dark:hover:text-purple-400 transition-colors duration-300">
             {project.project_title}
           </h3>
 
           {project.description && (
-            <p className="text-sm text-gray-300 dark:text-gray-400 mb-3 line-clamp-2 leading-relaxed">
+            <p className="project-card-description text-sm text-gray-300 dark:text-gray-400 mb-3 leading-relaxed">
               {project.description}
             </p>
           )}
-          <div className="flex flex-wrap gap-1 sm:gap-2 mb-4 flex-1">
+          <div className="project-card-tags flex flex-wrap gap-1 sm:gap-2 mb-4">
             {(project.tools_technologies || []).map((tech, index) => (
               <span
                 key={index}
@@ -133,9 +133,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             ))}
           </div>
 
-          {/* Removed like/comment section. Layout remains clean. */}
 
-          {/* Removed comment modal section. */}
         </div>
       </motion.div>
 
