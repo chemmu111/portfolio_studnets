@@ -25,6 +25,7 @@ const Admin: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [linkedinProfilePic, setLinkedinProfilePic] = useState<string>('');
   const [fetchingLinkedinPic, setFetchingLinkedinPic] = useState(false);
+  const [imageError, setImageError] = useState<string>('');
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProjectForm>();
 
   const categories = ['Web Application', 'Automation'];
@@ -78,15 +79,17 @@ const Admin: React.FC = () => {
 
   const onSubmit = async (data: ProjectForm) => {
     try {
-      let imageUrl = data.main_project_image;
+      // Validate image is present
+      if (!imagePreview && !selectedImage) {
+        setImageError('Please upload a project image');
+        return;
+      }
       
-      // If an image was uploaded, convert it to base64 data URL
-      if (selectedImage) {
-        const reader = new FileReader();
-        imageUrl = await new Promise<string>((resolve) => {
-          reader.onload = (e) => resolve(e.target?.result as string);
-          reader.readAsDataURL(selectedImage);
-        });
+      let imageUrl = imagePreview;
+      
+      // If no preview but we have selected image, use default
+      if (!imageUrl && !selectedImage) {
+        imageUrl = 'https://via.placeholder.com/600x400/6366f1/ffffff?text=Project+Image';
       }
 
       const projectData = {
@@ -106,10 +109,14 @@ const Admin: React.FC = () => {
       if (success) {
         setShowForm(false);
         setEditingProject(null);
+        setSelectedImage(null);
+        setImagePreview('');
+        setImageError('');
         reset();
       }
     } catch (error) {
       console.error('Error saving project:', error);
+      setImageError('Failed to save project. Please try again.');
     }
   };
 
@@ -117,6 +124,7 @@ const Admin: React.FC = () => {
     setEditingProject(project);
     setSelectedImage(null);
     setImagePreview(project.main_project_image || '');
+    setImageError('');
     setLinkedinProfilePic(project.linkedin_profile_picture || '');
     setValue('student_name', project.student_name);
     setValue('project_title', project.project_title);
@@ -141,6 +149,7 @@ const Admin: React.FC = () => {
     setEditingProject(null);
     setSelectedImage(null);
     setImagePreview('');
+    setImageError('');
     setLinkedinProfilePic('');
     reset();
   };
@@ -148,10 +157,35 @@ const Admin: React.FC = () => {
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Reset previous errors
+      setImageError('');
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setImageError('Please upload a valid image file (JPG, PNG, or WebP)');
+        return;
+      }
+      
+      // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+      const maxSize = 2 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setImageError('Image size must be less than 2MB');
+        return;
+      }
+      
+      // If validation passes, process the file
       setSelectedImage(file);
+      
+      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
+        const result = e.target?.result as string;
+        setImagePreview(result);
+        setValue('main_project_image', result);
+      };
+      reader.onerror = () => {
+        setImageError('Failed to read the image file');
       };
       reader.readAsDataURL(file);
     }
@@ -160,7 +194,14 @@ const Admin: React.FC = () => {
   const removeImage = () => {
     setSelectedImage(null);
     setImagePreview('');
+    setImageError('');
     setValue('main_project_image', '');
+    
+    // Reset file input
+    const fileInput = document.getElementById('image-upload') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   };
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-20 sm:pt-24 pb-12 transition-colors duration-300">
@@ -359,80 +400,86 @@ const Admin: React.FC = () => {
 
                 <div>
                   <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2 sm:mb-3">
-                    Main Project Image *
+                    Main Project Image * (JPG, PNG, WebP - Max 2MB)
                   </label>
                   
-                  {/* Image Upload Area */}
+                  {/* Image Upload Button and Preview */}
                   <div className="space-y-2 sm:space-y-3">
-                    {imagePreview ? (
+                    {/* Upload Button */}
+                    <div className="flex items-center space-x-3">
+                      <label
+                        htmlFor="image-upload"
+                        className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg cursor-pointer transition-all duration-300 text-sm font-medium min-h-[44px]"
+                      >
+                        <Upload size={16} />
+                        <span>Choose Image</span>
+                      </label>
+                      
+                      {selectedImage && (
+                        <div className="flex items-center space-x-2 text-sm text-green-400">
+                          <span>✓</span>
+                          <span>{selectedImage.name}</span>
+                          <span className="text-gray-400">({(selectedImage.size / 1024 / 1024).toFixed(2)}MB)</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Image Preview */}
+                    {imagePreview && (
                       <div className="relative group">
                         <img
                           src={imagePreview}
                           alt="Project preview"
-                          className="w-full h-32 sm:h-40 lg:h-48 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200"
+                          className="w-full h-48 sm:h-56 object-cover rounded-lg border border-purple-500/30 bg-gray-100 dark:bg-gray-800"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src !== 'https://via.placeholder.com/600x400/6366f1/ffffff?text=Preview+Error') {
+                              target.src = 'https://via.placeholder.com/600x400/6366f1/ffffff?text=Preview+Error';
+                            }
+                          }}
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-lg">
                           <button
                             type="button"
                             onClick={removeImage}
-                            className="p-1.5 sm:p-2 bg-red-600 hover:bg-red-700 text-white rounded-full transition-colors duration-300"
+                            className="flex items-center space-x-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-300 text-sm"
                           >
-                            <X size={14} className="sm:w-4 sm:h-4" />
+                            <X size={16} />
+                            <span>Remove</span>
                           </button>
                         </div>
                       </div>
-                    ) : (
-                      <div className="w-full h-32 sm:h-40 lg:h-48 border-2 border-dashed border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-purple-500 dark:hover:border-purple-500 light:hover:border-purple-600 transition-all duration-300 bg-gray-800/20 dark:bg-gray-800/20 light:bg-gray-50">
-                        <Image className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-purple-400 dark:text-purple-400 light:text-purple-600 mb-2 sm:mb-3" />
-                        <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 text-center mb-1 sm:mb-2 px-2">
-                          Click to upload project image
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-500">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
-                      </div>
                     )}
                     
+                    {/* File Input */}
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
                       onChange={handleImageSelect}
                       className="hidden"
                       id="image-upload"
                     />
                     
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
-                      <label
-                        htmlFor="image-upload"
-                        className="flex items-center justify-center space-x-2 px-3 sm:px-4 py-2 bg-purple-600/20 dark:bg-purple-600/20 light:bg-purple-100 text-purple-300 dark:text-purple-300 light:text-purple-700 rounded-lg cursor-pointer hover:bg-purple-600/30 dark:hover:bg-purple-600/30 light:hover:bg-purple-200 transition-all duration-300 text-xs sm:text-sm border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 min-h-[40px]"
-                      >
-                        <Upload size={12} className="sm:w-3.5 sm:h-3.5" />
-                        <span>Choose Image</span>
-                      </label>
-                      
-                      {imagePreview && (
-                        <button
-                          type="button"
-                          onClick={removeImage}
-                          className="px-3 sm:px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-all duration-300 text-xs sm:text-sm border border-red-500/30 min-h-[40px]"
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
+                    {/* Upload Instructions */}
+                    {!imagePreview && (
+                      <div className="text-center p-6 border-2 border-dashed border-purple-500/30 rounded-lg bg-gray-800/10">
+                        <Image className="w-12 h-12 text-purple-400 mx-auto mb-3" />
+                        <p className="text-sm text-gray-400 mb-1">No image selected</p>
+                        <p className="text-xs text-gray-500">Choose an image file to upload</p>
+                      </div>
+                    )}
+                    
+                    {/* Error Display */}
+                    {imageError && (
+                      <div className="p-3 bg-red-600/20 border border-red-500/30 rounded-lg">
+                        <p className="text-red-400 text-sm">{imageError}</p>
+                      </div>
+                    )}
                   </div>
                   
-                  {/* Hidden input for form validation */}
-                  <input
-                    {...register('main_project_image', { 
-                      required: !imagePreview && !selectedImage ? 'Project image is required' : false 
-                    })}
-                    type="hidden"
-                    value={imagePreview}
-                  />
-                  
-                  {errors.main_project_image && !imagePreview && !selectedImage && (
-                    <p className="text-red-400 text-xs sm:text-sm mt-1 sm:mt-2">{errors.main_project_image.message}</p>
+                  {/* Validation Error */}
+                  {errors.main_project_image && (
+                    <p className="text-red-400 text-xs sm:text-sm mt-2">{errors.main_project_image.message}</p>
                   )}
                 </div>
 
