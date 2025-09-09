@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Save, X, Upload, Image } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useProjects } from '../contexts/ProjectContext';
+import StudentProfileUpload from '../components/StudentProfileUpload';
 
 interface ProjectForm {
   student_name: string;
@@ -27,6 +28,10 @@ const Admin: React.FC = () => {
   const [fetchingLinkedinPic, setFetchingLinkedinPic] = useState(false);
   const [imageError, setImageError] = useState<string>('');
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProjectForm>();
+
+  // Student profile image state
+  const [studentProfileImage, setStudentProfileImage] = useState<string>('');
+  const [currentStudentName, setCurrentStudentName] = useState<string>('');
 
   const categories = ['Web Application', 'Automation'];
 
@@ -126,6 +131,8 @@ const Admin: React.FC = () => {
     setImagePreview(project.main_project_image || '');
     setImageError('');
     setLinkedinProfilePic(project.linkedin_profile_picture || '');
+    setStudentProfileImage(''); // Reset student profile image for editing
+    setCurrentStudentName(project.student_name);
     setValue('student_name', project.student_name);
     setValue('project_title', project.project_title);
     setValue('description', project.description || '');
@@ -152,6 +159,8 @@ const Admin: React.FC = () => {
     setImageError('');
     setLinkedinProfilePic('');
     reset();
+    setStudentProfileImage('');
+    setCurrentStudentName('');
   };
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,6 +211,21 @@ const Admin: React.FC = () => {
     if (fileInput) {
       fileInput.value = '';
     }
+  };
+
+  // Handle student profile image confirmation
+  const handleStudentProfileConfirm = (imageData: string) => {
+    setStudentProfileImage(imageData);
+  };
+
+  // Handle student profile image removal
+  const handleStudentProfileRemove = () => {
+    setStudentProfileImage('');
+  };
+
+  // Watch student name changes for profile component
+  const watchStudentName = (name: string) => {
+    setCurrentStudentName(name);
   };
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-20 sm:pt-24 pb-12 transition-colors duration-300">
@@ -257,6 +281,20 @@ const Admin: React.FC = () => {
               </div>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 sm:space-y-4 lg:space-y-6">
+                {/* Student Profile Section */}
+                <div className="bg-gray-800/30 dark:bg-gray-800/30 light:bg-gray-50 rounded-lg p-4 sm:p-6 border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200">
+                  <h3 className="text-sm sm:text-base font-semibold text-white dark:text-white light:text-gray-900 mb-4 text-center">
+                    Student Profile
+                  </h3>
+                  <StudentProfileUpload
+                    studentName={currentStudentName}
+                    currentImage={studentProfileImage}
+                    onImageConfirm={handleStudentProfileConfirm}
+                    onImageRemove={handleStudentProfileRemove}
+                    className="w-full"
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                   <div>
                     <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
@@ -264,6 +302,7 @@ const Admin: React.FC = () => {
                     </label>
                     <input
                       {...register('student_name', { required: 'Student name is required' })}
+                      onChange={(e) => { register('student_name').onChange(e); watchStudentName(e.target.value); }}
                       className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
                       placeholder="Enter student name"
                     />
@@ -346,6 +385,12 @@ const Admin: React.FC = () => {
                         className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
                         placeholder="https://linkedin.com/in/username"
                       />
+                      {/* Student Profile Circle - Small version for list */}
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-purple-400 flex-shrink-0 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-800 dark:to-purple-900">
+                        <div className="w-full h-full flex items-center justify-center text-xs sm:text-sm font-bold text-purple-600 dark:text-purple-300">
+                          {project.student_name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2)}
+                        </div>
+                      </div>
                       
                       {/* LinkedIn Profile Picture Preview */}
                       {linkedinProfilePic && (
