@@ -385,13 +385,6 @@ const Admin: React.FC = () => {
                         className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
                         placeholder="https://linkedin.com/in/username"
                       />
-                      {/* Student Profile Circle - Small version for list */}
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-purple-400 flex-shrink-0 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-800 dark:to-purple-900">
-                        <div className="w-full h-full flex items-center justify-center text-xs sm:text-sm font-bold text-purple-600 dark:text-purple-300">
-                          {project.student_name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2)}
-                        </div>
-                      </div>
-                      
                       {/* LinkedIn Profile Picture Preview */}
                       {linkedinProfilePic && (
                         <div className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 bg-gray-800/30 dark:bg-gray-800/30 light:bg-gray-100 rounded-lg border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200">
