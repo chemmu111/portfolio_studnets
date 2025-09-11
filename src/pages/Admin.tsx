@@ -295,6 +295,20 @@ const Admin: React.FC = () => {
                   />
                 </div>
 
+                {/* Student Profile Section */}
+                <div className="bg-gray-800/30 dark:bg-gray-800/30 light:bg-gray-50 rounded-lg p-4 sm:p-6 border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200">
+                  <h3 className="text-sm sm:text-base font-semibold text-white dark:text-white light:text-gray-900 mb-4 text-center">
+                    Student Profile
+                  </h3>
+                  <StudentProfileUpload
+                    studentName={currentStudentName}
+                    currentImage={studentProfileImage}
+                    onImageConfirm={handleStudentProfileConfirm}
+                    onImageRemove={handleStudentProfileRemove}
+                    className="w-full"
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                   <div>
                     <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
@@ -302,6 +316,7 @@ const Admin: React.FC = () => {
                     </label>
                     <input
                       {...register('student_name', { required: 'Student name is required' })}
+                      onChange={(e) => { register('student_name').onChange(e); watchStudentName(e.target.value); }}
                       onChange={(e) => { register('student_name').onChange(e); watchStudentName(e.target.value); }}
                       className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
                       placeholder="Enter student name"
