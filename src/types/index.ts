@@ -48,3 +48,16 @@ export interface AuthContextType {
   setAuthState: (state: { isAuthenticated: boolean; isAdmin: boolean; email: string }) => void;
   email: string | null;
 }
+
+export interface SuccessStory {
+  id: string;
+  student_name: string;
+  title: string;
+  content: string;
+  student_image?: string;
+  linkedin_link?: string;
+  company?: string;
+  position?: string;
+  achievement_type: 'job_placement' | 'certification' | 'promotion' | 'startup' | 'other';
+  created_at: string;
+}

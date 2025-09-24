@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Portfolio from './pages/Portfolio';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import SuccessStories from './pages/SuccessStories';
 import Footer from './components/Footer';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/success-stories" element={<SuccessStories />} />
                 <Route path="/login" element={<Login />} />
                 <Route 
                   path="/admin" 

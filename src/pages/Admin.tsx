@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Plus, Edit, Trash2, Save, X, Upload, Image } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useProjects } from '../contexts/ProjectContext';
+import { SuccessStory } from '../types';
+import { supabase } from '../lib/supabase';
 import StudentProfileUpload from '../components/StudentProfileUpload';
 
 interface ProjectForm {
@@ -20,8 +22,16 @@ interface ProjectForm {
 
 const Admin: React.FC = () => {
   const { projects, loading, addProject, updateProject, deleteProject } = useProjects();
+  const [activeTab, setActiveTab] = useState<'projects' | 'stories'>('projects');
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState<any>(null);
+  
+  // Success Stories State
+  const [successStories, setSuccessStories] = useState<SuccessStory[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(false);
+  const [showStoryForm, setShowStoryForm] = useState(false);
+  const [editingStory, setEditingStory] = useState<SuccessStory | null>(null);
+  
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [linkedinProfilePic, setLinkedinProfilePic] = useState<string>('');
@@ -32,8 +42,28 @@ const Admin: React.FC = () => {
   // Student profile image state
   const [studentProfileImage, setStudentProfileImage] = useState<string>('');
   const [currentStudentName, setCurrentStudentName] = useState<string>('');
+  
+  // Success Story Form
+  interface StoryForm {
+    student_name: string;
+    title: string;
+    content: string;
+    company?: string;
+    position?: string;
+    linkedin_link?: string;
+    achievement_type: string;
+  }
+  
+  const { register: registerStory, handleSubmit: handleSubmitStory, reset: resetStory, setValue: setValueStory, formState: { errors: storyErrors } } = useForm<StoryForm>();
 
   const categories = ['Web Application', 'Automation'];
+  const achievementTypes = [
+    { value: 'job_placement', label: 'Job Placement' },
+    { value: 'certification', label: 'Certification' },
+    { value: 'promotion', label: 'Promotion' },
+    { value: 'startup', label: 'Startup' },
+    { value: 'other', label: 'Other' }
+  ];
 
   // Function to extract LinkedIn username from URL
   const extractLinkedInUsername = (url: string): string | null => {
@@ -227,6 +257,109 @@ const Admin: React.FC = () => {
   const watchStudentName = (name: string) => {
     setCurrentStudentName(name);
   };
+  
+  // Load Success Stories
+  useEffect(() => {
+    if (activeTab === 'stories') {
+      loadSuccessStories();
+    }
+  }, [activeTab]);
+  
+  const loadSuccessStories = async () => {
+    try {
+      setStoriesLoading(true);
+      const { data, error } = await supabase
+        .from('success_stories')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSuccessStories(data || []);
+    } catch (error) {
+      console.error('Error loading success stories:', error);
+      // Mock data for demo
+      setSuccessStories([]);
+    } finally {
+      setStoriesLoading(false);
+    }
+  };
+  
+  // Success Story Handlers
+  const onSubmitStory = async (data: StoryForm) => {
+    try {
+      const storyData = {
+        ...data,
+        student_image: studentProfileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.student_name)}&background=6366f1&color=ffffff&size=200&rounded=true`
+      };
+
+      let success = false;
+      if (editingStory) {
+        const { error } = await supabase
+          .from('success_stories')
+          .update(storyData)
+          .eq('id', editingStory.id);
+        success = !error;
+      } else {
+        const { error } = await supabase
+          .from('success_stories')
+          .insert([storyData]);
+        success = !error;
+      }
+
+      if (success) {
+        setShowStoryForm(false);
+        setEditingStory(null);
+        setStudentProfileImage('');
+        resetStory();
+        loadSuccessStories();
+        toast.success(editingStory ? 'Story updated successfully!' : 'Story created successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving story:', error);
+      toast.error('Failed to save story');
+    }
+  };
+  
+  const handleEditStory = (story: SuccessStory) => {
+    setEditingStory(story);
+    setStudentProfileImage(story.student_image || '');
+    setCurrentStudentName(story.student_name);
+    setValueStory('student_name', story.student_name);
+    setValueStory('title', story.title);
+    setValueStory('content', story.content);
+    setValueStory('company', story.company || '');
+    setValueStory('position', story.position || '');
+    setValueStory('linkedin_link', story.linkedin_link || '');
+    setValueStory('achievement_type', story.achievement_type);
+    setShowStoryForm(true);
+  };
+  
+  const handleDeleteStory = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this success story?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('success_stories')
+        .delete()
+        .eq('id', id);
+        
+      if (!error) {
+        loadSuccessStories();
+        toast.success('Story deleted successfully!');
+      }
+    } catch (error) {
+      console.error('Error deleting story:', error);
+      toast.error('Failed to delete story');
+    }
+  };
+  
+  const handleCancelStory = () => {
+    setShowStoryForm(false);
+    setEditingStory(null);
+    setStudentProfileImage('');
+    setCurrentStudentName('');
+    resetStory();
+  };
   return (
     <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white pt-20 sm:pt-24 pb-12 transition-colors duration-300">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -242,18 +375,47 @@ const Admin: React.FC = () => {
               Admin Dashboard
             </h1>
             <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-400">
-              Manage student projects and portfolio content
+              Manage student projects, success stories and portfolio content
             </p>
           </div>
           <motion.button
-            onClick={() => setShowForm(true)}
+            onClick={() => activeTab === 'projects' ? setShowForm(true) : setShowStoryForm(true)}
             className="flex items-center justify-center space-x-2 px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-300 text-xs sm:text-sm lg:text-base w-full sm:w-auto min-h-[44px]"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
             <Plus size={14} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-            <span>Add Project</span>
+            <span>{activeTab === 'projects' ? 'Add Project' : 'Add Success Story'}</span>
           </motion.button>
+        </motion.div>
+        
+        {/* Tab Navigation */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex space-x-1 bg-gray-100 dark:bg-gray-800/50 rounded-full p-1 mb-6 sm:mb-8 w-fit mx-auto"
+        >
+          <button
+            onClick={() => setActiveTab('projects')}
+            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 ${
+              activeTab === 'projects'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-purple-700/30'
+            }`}
+          >
+            Projects
+          </button>
+          <button
+            onClick={() => setActiveTab('stories')}
+            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-medium transition-all duration-300 ${
+              activeTab === 'stories'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-purple-100 dark:hover:bg-purple-700/30'
+            }`}
+          >
+            Success Stories
+          </button>
         </motion.div>
 
         {/* Project Form Modal */}

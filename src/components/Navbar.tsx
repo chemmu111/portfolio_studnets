@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Success Stories', path: '/success-stories' },
   ];
 
   if (isAdmin) {
