@@ -457,20 +457,6 @@ const Admin: React.FC = () => {
                   />
                 </div>
 
-                {/* Student Profile Section */}
-                <div className="bg-gray-800/30 dark:bg-gray-800/30 light:bg-gray-50 rounded-lg p-4 sm:p-6 border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200">
-                  <h3 className="text-sm sm:text-base font-semibold text-white dark:text-white light:text-gray-900 mb-4 text-center">
-                    Student Profile
-                  </h3>
-                  <StudentProfileUpload
-                    studentName={currentStudentName}
-                    currentImage={studentProfileImage}
-                    onImageConfirm={handleStudentProfileConfirm}
-                    onImageRemove={handleStudentProfileRemove}
-                    className="w-full"
-                  />
-                </div>
-
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                   <div>
                     <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
@@ -478,7 +464,6 @@ const Admin: React.FC = () => {
                     </label>
                     <input
                       {...register('student_name', { required: 'Student name is required' })}
-                      onChange={(e) => { register('student_name').onChange(e); watchStudentName(e.target.value); }}
                       onChange={(e) => { register('student_name').onChange(e); watchStudentName(e.target.value); }}
                       className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
                       placeholder="Enter student name"
@@ -734,80 +719,321 @@ const Admin: React.FC = () => {
           </motion.div>
         )}
 
-        {/* Projects List */}
-        {loading ? (
-          <div className="flex justify-center py-20">
+        {/* Success Story Form Modal */}
+        {showStoryForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto"
+          >
             <motion.div
-              className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 border-2 sm:border-3 lg:border-4 border-purple-500/30 border-t-purple-500 rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
-                  <div className="flex space-x-2 sm:space-x-3 lg:space-x-4 flex-1">
-                    <img
-                      src={project.main_project_image || 'https://via.placeholder.com/100x100?text=Project'}
-                      alt={`${project.project_title} project image`}
-                      className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 bg-gray-100 dark:bg-gray-800"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        if (target.src !== 'https://via.placeholder.com/100x100?text=Project') {
-                          target.src = 'https://via.placeholder.com/100x100?text=Project';
-                        }
-                      }}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200 mx-2 sm:mx-4 my-2 sm:my-0"
+            >
+              <div className="flex items-start justify-between mb-3 sm:mb-4 lg:mb-6">
+                <h2 className="text-base sm:text-lg lg:text-xl font-bold text-white dark:text-white light:text-gray-900 pr-3 sm:pr-4 flex-1">
+                  {editingStory ? 'Edit Success Story' : 'Add New Success Story'}
+                </h2>
+                <button
+                  onClick={handleCancelStory}
+                  className="text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-white dark:hover:text-white light:hover:text-gray-900 transition-colors duration-300 text-lg sm:text-xl flex-shrink-0 p-1"
+                >
+                  <X size={18} className="sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmitStory(onSubmitStory)} className="space-y-3 sm:space-y-4 lg:space-y-6">
+                {/* Student Profile Section */}
+                <div className="bg-gray-800/30 dark:bg-gray-800/30 light:bg-gray-50 rounded-lg p-4 sm:p-6 border border-purple-500/20 dark:border-purple-500/20 light:border-purple-200">
+                  <h3 className="text-sm sm:text-base font-semibold text-white dark:text-white light:text-gray-900 mb-4 text-center">
+                    Student Profile
+                  </h3>
+                  <StudentProfileUpload
+                    studentName={currentStudentName}
+                    currentImage={studentProfileImage}
+                    onImageConfirm={handleStudentProfileConfirm}
+                    onImageRemove={handleStudentProfileRemove}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                      Student Name *
+                    </label>
+                    <input
+                      {...registerStory('student_name', { required: 'Student name is required' })}
+                      onChange={(e) => { registerStory('student_name').onChange(e); watchStudentName(e.target.value); }}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
+                      placeholder="Enter student name"
                     />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">{project.project_title}</h3>
-                      <p className="text-xs sm:text-sm text-purple-700 dark:text-purple-400 mb-1 sm:mb-2">by {project.student_name}</p>
-                      <div className="flex flex-wrap gap-1 mb-1 sm:mb-2">
-                        {project.tools_technologies.map((tech, techIndex) => (
-                          <span
-                            key={techIndex}
-                            className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-purple-600/20 dark:bg-purple-600/20 light:bg-purple-100 text-purple-300 dark:text-purple-300 light:text-purple-700 rounded text-xs border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 whitespace-nowrap"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4 text-xs text-gray-700 dark:text-gray-400">
-                        <span>❤️ {project.likes_count}</span>
-                        <span>💬 {project.comments_count}</span>
-                        <span className="hidden sm:inline text-xs">📅 {new Date(project.created_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
+                    {storyErrors.student_name && (
+                      <p className="text-red-400 text-xs sm:text-sm mt-1">{storyErrors.student_name.message}</p>
+                    )}
                   </div>
-                  <div className="flex space-x-1 sm:space-x-2 justify-end sm:justify-start flex-shrink-0">
-                    <motion.button
-                      onClick={() => handleEdit(project)}
-                      className="p-1.5 sm:p-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-lg transition-all duration-300 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
+
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                      Achievement Type *
+                    </label>
+                    <select
+                      {...registerStory('achievement_type', { required: 'Achievement type is required' })}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 appearance-none cursor-pointer text-sm sm:text-base min-h-[44px]"
                     >
-                      <Edit size={12} className="sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4" />
-                    </motion.button>
-                    <motion.button
-                      onClick={() => handleDelete(project.id)}
-                      className="p-1.5 sm:p-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-all duration-300 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Trash2 size={12} className="sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4" />
-                    </motion.button>
+                      <option value="">Select achievement type</option>
+                      {achievementTypes.map(type => (
+                        <option key={type.value} value={type.value}>{type.label}</option>
+                      ))}
+                    </select>
+                    {storyErrors.achievement_type && (
+                      <p className="text-red-400 text-xs sm:text-sm mt-1">{storyErrors.achievement_type.message}</p>
+                    )}
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                    Success Story Title *
+                  </label>
+                  <input
+                    {...registerStory('title', { required: 'Title is required' })}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
+                    placeholder="Enter success story title"
+                  />
+                  {storyErrors.title && (
+                    <p className="text-red-400 text-xs sm:text-sm mt-1">{storyErrors.title.message}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                      Company
+                    </label>
+                    <input
+                      {...registerStory('company')}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
+                      placeholder="Company name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                      Position
+                    </label>
+                    <input
+                      {...registerStory('position')}
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
+                      placeholder="Job position/title"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                    LinkedIn Profile URL
+                  </label>
+                  <input
+                    {...registerStory('linkedin_link')}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base min-h-[44px]"
+                    placeholder="https://linkedin.com/in/username"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-400 light:text-gray-600 mb-1 sm:mb-2">
+                    Success Story Content *
+                  </label>
+                  <textarea
+                    {...registerStory('content', { required: 'Content is required' })}
+                    rows={4}
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 rounded-lg focus:border-purple-500 dark:focus:border-purple-500 light:focus:border-purple-600 transition-all duration-300 text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 text-sm sm:text-base resize-vertical min-h-[100px]"
+                    placeholder="Share the success story, achievements, and journey..."
+                  />
+                  {storyErrors.content && (
+                    <p className="text-red-400 text-xs sm:text-sm mt-1">{storyErrors.content.message}</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 lg:space-x-4 pt-3 sm:pt-4 lg:pt-6">
+                  <motion.button
+                    type="submit"
+                    className="flex items-center justify-center space-x-2 px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-all duration-300 flex-1 text-xs sm:text-sm lg:text-base min-h-[44px]"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Save size={14} className="sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                    <span>{editingStory ? 'Update Story' : 'Create Story'}</span>
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    onClick={handleCancelStory}
+                    className="px-3 sm:px-4 lg:px-6 py-2.5 sm:py-3 border border-gray-600 dark:border-gray-600 light:border-gray-300 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100 font-semibold rounded-lg transition-all duration-300 text-xs sm:text-sm lg:text-base min-h-[44px]"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Cancel
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Content based on active tab */}
+        {activeTab === 'projects' ? (
+          // Projects List
+          loading ? (
+            <div className="flex justify-center py-20">
+              <motion.div
+                className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 border-2 sm:border-3 lg:border-4 border-purple-500/30 border-t-purple-500 rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
+              {projects.map((project, index) => (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex space-x-2 sm:space-x-3 lg:space-x-4 flex-1">
+                      <img
+                        src={project.main_project_image || 'https://via.placeholder.com/100x100?text=Project'}
+                        alt={`${project.project_title} project image`}
+                        className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-cover rounded-lg border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 bg-gray-100 dark:bg-gray-800"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target.src !== 'https://via.placeholder.com/100x100?text=Project') {
+                            target.src = 'https://via.placeholder.com/100x100?text=Project';
+                          }
+                        }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">{project.project_title}</h3>
+                        <p className="text-xs sm:text-sm text-purple-700 dark:text-purple-400 mb-1 sm:mb-2">by {project.student_name}</p>
+                        <div className="flex flex-wrap gap-1 mb-1 sm:mb-2">
+                          {project.tools_technologies.map((tech, techIndex) => (
+                            <span
+                              key={techIndex}
+                              className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-purple-600/20 dark:bg-purple-600/20 light:bg-purple-100 text-purple-300 dark:text-purple-300 light:text-purple-700 rounded text-xs border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 whitespace-nowrap"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4 text-xs text-gray-700 dark:text-gray-400">
+                          <span>❤️ {project.likes_count}</span>
+                          <span>💬 {project.comments_count}</span>
+                          <span className="hidden sm:inline text-xs">📅 {new Date(project.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex space-x-1 sm:space-x-2 justify-end sm:justify-start flex-shrink-0">
+                      <motion.button
+                        onClick={() => handleEdit(project)}
+                        className="p-1.5 sm:p-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-lg transition-all duration-300 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Edit size={12} className="sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                      <motion.button
+                        onClick={() => handleDelete(project.id)}
+                        className="p-1.5 sm:p-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-all duration-300 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Trash2 size={12} className="sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )
+        ) : (
+          // Success Stories List
+          storiesLoading ? (
+            <div className="flex justify-center py-20">
+              <motion.div
+                className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 border-2 sm:border-3 lg:border-4 border-purple-500/30 border-t-purple-500 rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+              />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
+              {successStories.map((story, index) => (
+                <motion.div
+                  key={story.id}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="bg-white dark:bg-gray-900/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 border border-purple-200 dark:border-purple-500/20 hover:border-purple-400 dark:hover:border-purple-500/50 transition-all duration-300"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex space-x-2 sm:space-x-3 lg:space-x-4 flex-1">
+                      <img
+                        src={story.student_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(story.student_name)}&background=6366f1&color=ffffff&size=200&rounded=true`}
+                        alt={`${story.student_name} profile`}
+                        className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-cover rounded-full border border-purple-500/30 dark:border-purple-500/30 light:border-purple-200 flex-shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/20 bg-gray-100 dark:bg-gray-800"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          if (target.src !== `https://ui-avatars.com/api/?name=${encodeURIComponent(story.student_name)}&background=6366f1&color=ffffff&size=200&rounded=true`) {
+                            target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(story.student_name)}&background=6366f1&color=ffffff&size=200&rounded=true`;
+                          }
+                        }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">{story.title}</h3>
+                        <p className="text-xs sm:text-sm text-purple-700 dark:text-purple-400 mb-1 sm:mb-2">by {story.student_name}</p>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <span className="px-2 py-1 bg-purple-600/20 text-purple-300 rounded text-xs capitalize">
+                            {story.achievement_type.replace('_', ' ')}
+                          </span>
+                          {story.company && (
+                            <span className="text-xs text-gray-600 dark:text-gray-400">
+                              at {story.company}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-700 dark:text-gray-400 line-clamp-2">{story.content}</p>
+                        <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4 text-xs text-gray-700 dark:text-gray-400 mt-2">
+                          <span>📅 {new Date(story.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex space-x-1 sm:space-x-2 justify-end sm:justify-start flex-shrink-0">
+                      <motion.button
+                        onClick={() => handleEditStory(story)}
+                        className="p-1.5 sm:p-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 rounded-lg transition-all duration-300 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Edit size={12} className="sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                      <motion.button
+                        onClick={() => handleDeleteStory(story.id)}
+                        className="p-1.5 sm:p-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded-lg transition-all duration-300 flex-shrink-0 min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Trash2 size={12} className="sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4" />
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )
         )}
       </div>
     </div>
