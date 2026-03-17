@@ -42,6 +42,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
+      // Check mock credentials first for demo mode
+      if (username === 'admin@techschool.com' && password === 'admin@123') {
+        localStorage.setItem('admin_token', 'mock-admin-id');
+        setIsAuthenticated(true);
+        setIsAdmin(true);
+        setEmail('admin@techschool.com');
+        toast.success('Login successful!');
+        return true;
+      }
+
       const { data, error } = await supabase
         .from('admins')
         .select('*')
