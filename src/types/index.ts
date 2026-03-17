@@ -47,6 +47,8 @@ export interface AuthContextType {
   loading: boolean;
   setAuthState: (state: { isAuthenticated: boolean; isAdmin: boolean; email: string }) => void;
   email: string | null;
+  resetPassword?: (email: string) => Promise<boolean>;
+  updatePassword?: (newPassword: string) => Promise<boolean>;
 }
 
 export interface SuccessStory {

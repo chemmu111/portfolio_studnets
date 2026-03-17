@@ -40,6 +40,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const resetPassword = async (email: string): Promise<boolean> => {
+    try {
+      // For demo purposes, we'll simulate sending an email
+      if (email === 'admin@techschool.com') {
+        // In a real application, you would:
+        // 1. Generate a secure reset token
+        // 2. Store it in the database with expiration
+        // 3. Send an email with the reset link
+        
+        // Simulate email sending delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        toast.success('Password reset email sent successfully!');
+        return true;
+      } else {
+        toast.error('Email address not found in our system');
+        return false;
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      toast.error('Failed to send reset email');
+      return false;
+    }
+  };
+
+  const updatePassword = async (newPassword: string): Promise<boolean> => {
+    try {
+      // In a real application, you would update the password in the database
+      // For demo purposes, we'll just show a success message
+      toast.success('Password updated successfully!');
+      return true;
+    } catch (error) {
+      console.error('Password update error:', error);
+      toast.error('Failed to update password');
+      return false;
+    }
+  };
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
       // Check mock credentials first for demo mode
@@ -107,6 +144,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     setAuthState,
     email,
+    resetPassword,
+    updatePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
