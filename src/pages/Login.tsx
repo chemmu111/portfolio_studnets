@@ -224,7 +224,7 @@ const Login: React.FC = () => {
                 ) : (
                   'Send Reset Email'
                 )}
-              </button>
+              </motion.button>
 
               <div className="text-center">
                 <button
